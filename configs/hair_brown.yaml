@@ -1,0 +1,45 @@
+phenotype:
+  name: hair_brown
+  source: zenodo_10715132
+  zenodo_columns: [hair_brown]
+  task: binary
+
+ld_blocks:
+  method: ldetect
+  reference_population: EUR
+
+model:
+  group:
+    type: xgboost
+    n_estimators: 500
+    max_depth: 6
+    learning_rate: 0.05
+  snp:
+    elastic_net_alpha: 0.5
+    dnn_hidden: [128, 64]
+    dnn_dropout: 0.3
+    top_m_blocks: 200
+  cv:
+    outer_folds: 5
+    inner_folds: 5
+    seed: 42
+
+stability:
+  n_bootstraps: 100
+  pi_block_threshold: 0.6
+  pi_snp_threshold: 0.5
+
+inference:
+  primary: knockoff
+  knockoff_method: gaussian_per_block
+  permutation:
+    n_perms: 1000
+    method: westfall_young
+  fdr_target: 0.05
+
+evaluation:
+  gwas_catalog_traits:
+    - "brown hair"
+    - "hair color"
+    - "hair pigmentation"
+  top_k_curve: [10, 25, 50, 100, 250, 500]
